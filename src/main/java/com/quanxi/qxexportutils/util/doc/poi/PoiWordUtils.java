@@ -3,6 +3,7 @@ package com.quanxi.qxexportutils.util.doc.poi;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import com.quanxi.qxexportutils.common.DocConst;
 import com.quanxi.qxexportutils.util.doc.poi.export2word.CustomTOC;
 import com.quanxi.qxexportutils.util.doc.poi.export2word.TextStyle;
 import com.quanxi.qxexportutils.util.doc.poi.export2word.XWPFHelper;
@@ -174,6 +175,10 @@ public class PoiWordUtils {
 
         style.setType(STStyleType.PARAGRAPH);
         styles.addStyle(style);
+    }
+
+    public XWPFDocument getDocument() {
+        return document;
     }
 
     /**
@@ -397,6 +402,67 @@ public class PoiWordUtils {
                 xwpfHelperTable.mergeCellsVertically(table, col, fromRow, row);
             }
         }
+    }
+
+    public void createControl(DocConst.CONTROL_TYPE type, Map<String, String> data) {
+        XWPFParagraph para = document.createParagraph();
+        XWPFRun run = para.createRun();
+
+        run.setText("内容控件：[");
+
+        CTSdtRun ctSdtRun = para.getCTP().addNewSdt();
+        CTSdtPr sdtPr = ctSdtRun.addNewSdtPr();
+
+        CTSdtListItem listItem;
+
+        switch (type) {
+            case DROPDOWNLIST:
+                CTSdtDropDownList dropDownList = sdtPr.addNewDropDownList();
+                listItem = dropDownList.addNewListItem();
+                listItem.setDisplayText("请选择");
+                listItem.setValue("请选择");
+
+                boolean bIsSet = false;
+
+                for (String s : data.keySet()) {
+                    String val = data.get(s);
+                    listItem = dropDownList.addNewListItem();
+                    listItem.setDisplayText(val);
+                    listItem.setValue(s);
+
+                }
+                break;
+            case COMBOBOX:
+                CTSdtComboBox comboBox = sdtPr.addNewComboBox();
+                listItem = comboBox.addNewListItem();
+                listItem.setDisplayText("请选择");
+                listItem.setValue("请选择");
+
+                for (String s : data.keySet()) {
+                    String val = data.get(s);
+                    listItem = comboBox.addNewListItem();
+                    listItem.setDisplayText(val);
+                    listItem.setValue(s);
+
+                }
+
+                break;
+            case DATE:
+                CTSdtDate date = sdtPr.addNewDate();
+                Calendar calendar = Calendar.getInstance();
+
+                CTString format = CTString.Factory.newInstance();
+                format.setVal("yyyy/MM/dd hh:mm:ss");
+
+                date.setDateFormat(format);
+                date.setFullDate(calendar);
+
+        }
+
+        ctSdtRun.addNewSdtContent().addNewR().addNewT().setStringValue("请选择");
+
+        run = para.createRun();
+        run.setText("] 内容控件后");
     }
 
     /**

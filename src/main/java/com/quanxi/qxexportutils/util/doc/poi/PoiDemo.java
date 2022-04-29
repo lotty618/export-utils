@@ -1,10 +1,11 @@
 package com.quanxi.qxexportutils.util.doc.poi;
 
-import com.quanxi.qxexportutils.util.doc.poi.export2word.XWPFHelperTable;
+import com.quanxi.qxexportutils.common.DocConst;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class PoiDemo {
     public static void main(String[] args) {
@@ -40,7 +41,7 @@ public class PoiDemo {
             wordUtils.replaceText(map);
 
             //添加表格
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 10; i++) {
 
                 //表格标题
                 wordUtils.createParagrah("新页面新标题" + i, true, PoiWordUtils.STYLE_TITLE, true);
@@ -61,6 +62,16 @@ public class PoiDemo {
                 //生成表格
                 XWPFTable table = wordUtils.createTable(header, PoiWordUtils.STYLE_TABLE_SUB_HEADER, data, PoiWordUtils.STYLE_TABLE_SUB_CONTENT, widths, 25, new int[]{0}, new int[]{4});
             }
+
+            //////////////
+            Map<String, String> mpData = new HashMap<>();
+            mpData.put("0", "苹果");
+            mpData.put("1", "香蕉");
+            wordUtils.createControl(DocConst.CONTROL_TYPE.DROPDOWNLIST, mpData);
+
+            wordUtils.createControl(DocConst.CONTROL_TYPE.COMBOBOX, mpData);
+
+            wordUtils.createControl(DocConst.CONTROL_TYPE.DATE, null);
 
             //创建柱状图
             //标题
